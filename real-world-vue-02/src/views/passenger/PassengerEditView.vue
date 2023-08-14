@@ -3,6 +3,7 @@ import { type PassengerItem } from '@/type'
 import type { PropType } from 'vue'
 import { useRouter } from 'vue-router';
 import { useMessageStore } from '@/stores/message';
+import NProgress from 'nprogress'
 
 const props = defineProps({
   passenger: {
@@ -13,16 +14,18 @@ const props = defineProps({
 const router = useRouter()
 const store = useMessageStore()
 function edit() {
-  store.updateMessage('You are successfully edited for ' + props.passenger?.first_name)
+  NProgress.start()
+  store.updateMessage('The update is in progress...')
   setTimeout(() => {
     store.resetMessage()
-  }, 3000)
-  router.push({
-    name: 'passenger-detail',
+    NProgress.done()
+    router.push({
+    name: 'passenger-list',
     params: {
       id: props.passenger?.id
     }
   })
+  }, 5000)
 }
 </script>
 <template>

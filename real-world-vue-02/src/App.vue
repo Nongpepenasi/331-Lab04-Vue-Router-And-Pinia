@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import { useMessageStore } from '@/stores/message';
+import { storeToRefs } from 'pinia';
+
+const store = useMessageStore()
+const { message } = storeToRefs(store)
 // import HelloWorld from './components/HelloWorld.vue'
 </script>
 
 <template>
   <header>
-
+    <div id="flashMessage" v-if="message">
+      <h4>{{ message }}</h4>
+    </div>
     <nav>
       <RouterLink :to="{name: 'passenger-list'}">Home</RouterLink>
       <RouterLink :to="{name: 'about'}">About</RouterLink>
@@ -52,6 +59,19 @@ header {
 
 h4 {
   font-size: 20px;
+}
+
+@keyframes yellowfade {
+  from {
+    background: rgb(255, 102, 0);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+#flashMessage {
+  animation: yellowfade 5s ease-in-out;
 }
 
 /* nav a.router-link-exact-active:hover {
