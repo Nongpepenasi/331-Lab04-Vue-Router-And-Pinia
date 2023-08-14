@@ -20,7 +20,7 @@ const props = defineProps({
     required: true
   }
 })
-const pageSize = ref(2) //Defualt page size
+const pageSize = ref(3) //Defualt page size
 
 EventService.getEvent(pageSize.value, props.page)
   .then((response: AxiosResponse<EventItem[]>) => {
@@ -32,7 +32,7 @@ EventService.getEvent(pageSize.value, props.page)
   })
   onBeforeRouteUpdate((to, from, next) => {
     const toPage = Number(to.query.page)
-    EventService.getEvent(2, toPage).then((response: AxiosResponse<EventItem[]>) => {
+    EventService.getEvent(3, toPage).then((response: AxiosResponse<EventItem[]>) => {
       events.value = response.data
       totalEvent.value = response.headers['x-total-count']
       next()
