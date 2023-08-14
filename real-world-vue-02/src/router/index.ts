@@ -10,6 +10,7 @@ import PassengerLayoutView from '@/views/passenger/PassengerLayoutView.vue'
 import PassengerAirlineView from '@/views/passenger/PassengerAirlineView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
+import NProgress from 'nprogress'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,6 +86,14 @@ const router = createRouter({
     }
     
   ]
+})
+
+router.beforeEach(() => {
+  NProgress.start()
+})
+
+router.afterEach(() => {
+  NProgress.done()
 })
 
 export default router
