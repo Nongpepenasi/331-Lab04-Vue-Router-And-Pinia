@@ -11,6 +11,8 @@ import PassengerAirlineView from '@/views/passenger/PassengerAirlineView.vue'
 import NotFoundView from '@/views/NotFoundView.vue'
 import NetworkErrorView from '@/views/NetworkErrorView.vue'
 import NProgress from 'nprogress'
+import PassengerService from '@/services/PassengerService'
+import { useAirlineStore, usePassengerStore } from '@/stores/passenger'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,31 +42,46 @@ const router = createRouter({
       path: '/passenger/:id',
       name: 'passenger-layout',
       component: PassengerLayoutView,
-      props: true,
+      beforeEnter: (to) => {
+        const id: number = parseInt(to.params.id as string)
+        const passengerStore = usePassengerStore()
+        const airlineStore = useAirlineStore()
+        return PassengerService.getPassengerById(id)
+        .then((response) => {
+          passengerStore.setPassenger(response.data)
+          return PassengerService.getAirlineById(Number(response.data.airlineId))
+        })
+        .then((response) => {
+          airlineStore.setAirline(response.data)
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 404) {
+            router.push({ name: '404-resource', params: { resource: 'passenger' } })    
+          } else {
+            router.push({ name: 'network-error' })
+          }
+        })
+      },
       children: [
         {
           path: '',
           name: 'passenger-detail',
           component: PassengerDetailView,
-          props: true
         },
         {
           path: 'edit',
           name: 'passenger-edit',
           component: PassengerEditView,
-          props: true
         },
         {
           path: 'register',
           name: 'passenger-register',
           component: PassengerRegisterView,
-          props: true
         },
         {
           path: 'airline',
           name: 'passenger-airline',
           component: PassengerAirlineView,
-          props: true
         }
       ]
     },

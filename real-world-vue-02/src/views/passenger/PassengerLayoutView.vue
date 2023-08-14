@@ -1,34 +1,14 @@
 <script setup lang="ts">
+import { usePassengerStore } from '@/stores/passenger';
+import { useAirlineStore } from '@/stores/passenger';
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import type { AirlineItem, PassengerItem } from '@/type'
-import PassengerService from '@/services/PassengerService'
-import { useRouter } from 'vue-router'
 
-// const event = ref<EventItem | null>(null)
-const passenger = ref<PassengerItem | null>(null)
-const airline = ref<AirlineItem | null>(null)
-const props = defineProps({
-  id: String,
-})
-const router = useRouter()
-
-PassengerService.getPassengerById(Number(props.id))
-  .then((response) => {
-    passenger.value = response.data
-    return PassengerService.getAirlineById(Number(passenger.value?.airlineId))
-  })
-  .then((response) => {
-    airline.value = response.data
-  })
-  .catch((error) => {
-    console.log(error)
-    if (error.response && error.response.status === 404) {
-        router.push({ name: '404-resource', params: { resource: 'passenger' } })    
-    } else {
-        router.push({ name: 'network-error' })
-    }
-  })
-
+const store = usePassengerStore()
+const store2 = useAirlineStore()
+const passenger = storeToRefs(store).passenger
+const airline = storeToRefs(store2).airline
+const id = ref(passenger.value?.id)
   
 </script>
 
